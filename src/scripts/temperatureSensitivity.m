@@ -1,17 +1,5 @@
 clear; 
-clc
-
-load("wits_temp_2021.mat")
-
-
-%%
-
-minTempRoute = mean(table2array(tempTable2022.min(:,{'Var3', 'Var9'})), 2);
-maxTempRoute = mean(table2array(tempTable2022.max(:,{'Var3', 'Var9'})), 2);
-
-createTemperatureDayEnergy([minTempRoute, maxTempRoute]./1e6)
-
-
+clc;
 %% Determine sensitivity for the hvac model with one change to one property
 
  
