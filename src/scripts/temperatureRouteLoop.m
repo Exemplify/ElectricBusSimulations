@@ -1,25 +1,8 @@
 clear; 
 clc
 
-
 load("wits_temp_2021.mat")
 
-
-%% Determine Energy for the HVAC Model
-load("wits_temp_2022.mat")
-loadOptions;
-[hvac_energy2022, tempTable2022] = calcHvacRouteEnergy(hourly_temp, minute_temp, options, vehicleProperties);
-load("wits_temp_2021.mat")
-[hvac_energy2021, tempTable2021] = calcHvacRouteEnergy(hourly_temp, minute_temp, options, vehicleProperties);
-hvac_energy_route = mean([hvac_energy2021, hvac_energy2022]);
-PR_MAX_TEMP_2021 = mean(table2array(tempTable2021.max(:,{'Var3', 'Var9'})), 'all')
-PR_MIN_TEMP_2021 = mean(table2array(tempTable2021.min(:,{'Var3', 'Var9'})), 'all')
-
-SR_MAX_TEMP_2021 = mean(table2array(tempTable2021.max(:,{'Var6', 'Var12'})), "all")
-SR_MIN_TEMP_2021 = mean(table2array(tempTable2021.min(:,{'Var6', 'Var12'})), "all")
-%%
-SR_MAX_TEMP_2022 = mean(table2array(tempTable2022.max(:,{'Var6', 'Var12'})), "all")
-SR_MIN_TEMP_2022 = mean(table2array(tempTable2022.min(:,{'Var3', 'Var9'})), "all")
 
 %%
 
@@ -31,7 +14,7 @@ createTemperatureDayEnergy([minTempRoute, maxTempRoute]./1e6)
 
 %% Determine sensitivity for the hvac model with one change to one property
 
-baseEnergy = [1.502870039336621e02,1.525008599525095e02];
+ 
 load("wits_temp_2022.mat")
 loadOptions;
 vehicleProperties.highTempPoints(2,2) =  vehicleProperties.highTempPoints(2,2)*0.8;
@@ -95,7 +78,7 @@ end
 
 
 %% Determine effect of temperature changes as the percentage change wont work
-baseEnergy = [1.502870039336621e02,1.525008599525095e02];
+
 changes = {'maxTemp','maxTempPower', 'minTemp', 'minTempPower'};
 
 

@@ -22,7 +22,7 @@ options.highPowerMotor = false;
 options.useTemperature = false;
 options.useAuxiliaries = true;
 options.useVehicleDynamics = true;
-options.combinedHvacEnergy = 60035917; % this is with battery losses already considered
+options.combinedHvacEnergy = 49722891; % this is with battery losses already considered
 
 vehicleProperties.minLoad = 13775;
 vehicleProperties.midLoad = 15888;

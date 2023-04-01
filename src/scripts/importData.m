@@ -2,13 +2,17 @@
 
 switch options.dataType
     case dataType.route1
-        load("route1_data.mat");
+        gps = importGps('sample_route1/Location');
+        barometer = importBarometer('sample_route1/Barometer');
     case dataType.route2
-        load("route2_data.mat");
+        gps = importGps('sample_route3/Location');
+        barometer = importBarometer('sample_route3/Barometer');
     case dataType.route3
-        load("route3_data.mat");
+        gps = importGps('sample_route2/Location');
+        barometer = importBarometer('sample_route2/Barometer');
     case dataType.route4
-        load("route4_data.mat");
+        gps = importGps('sample_route4/Location');
+        barometer = importBarometer('sample_route4/Barometer');
     otherwise
         error('No Data Type Selected')
 end 

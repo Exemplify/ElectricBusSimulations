@@ -7,6 +7,13 @@ vehicleProperties.gearEfficiency = 1;
 options.useAuxiliaries = false;
 processRoute;
 %% Process Break
+%% Compute Each Route Without Auxilieries
+loadOptions
+options.useAuxiliaries = false;
+
+computeAllRoutes;
+
+%% Process Break
 %% Compute each Route without the effect of internal dynamics or the effect of auxilieries 
 % To determine the statistical properties of the route requirements
 
@@ -15,10 +22,6 @@ options.limitByMaxPower = false;
 options.useAuxiliaries = false;
 
 computeAllRoutes;
-max(r_tot.dynamics.power.positive)
-mean(r_tot.dynamics.power.positive)
-std(r_tot.dynamics.power.positive)
-quantile(r_tot.dynamics.power.positive, [0.90, 0.95, 0.99])
 %% Process Break
 %% Compute each Route for each Auxiliary does not include HVAC
 loadOptions
@@ -87,16 +90,29 @@ minorRouteDT = mean(table2array(energyTableDT(:, {'total2', 'total4'})),'all');
 energyDTAux = mainRouteDT + minorRouteDT;
 
 energyAux = energyDTAux - energyDT;
-energyHvac = 60035917;
 auxTotal = energyHvac + energyAux;
 energyPerRoute = auxTotal + energyDT;
 dailyEnergy = energyPerRoute*6;
 
 
 %% Process Break
+%% Determine Energy for the HVAC Model
+load("wits_temp_2022.mat")
+loadOptions;
+[hvac_energy2022, tempTable2022] = calcHvacRouteEnergy(hourly_temp, minute_temp, options, vehicleProperties);
+load("wits_temp_2021.mat")
+[hvac_energy2021, tempTable2021] = calcHvacRouteEnergy(hourly_temp, minute_temp, options, vehicleProperties);
+
+% For calculations that require the average hvac energy the value
+% determined here must be set as a constant in the loadOptions file to reduce
+% computation time (this is currently done for the sample data)
+hvac_energy_route = mean([hvac_energy2021, hvac_energy2022]);
+
 %% Calculate Battery Mass and Energy for vehicle properties at max load
 
 loadOptions
+
+% The desired number of cycles required by the system
 desiredNumberOfCycles = [3.75, 5.8, 7.5];
 
 [cycleEnergy, batteriesMass, batterySizingTable] = calcFinalRouteEnergy(desiredNumberOfCycles, options, vehicleProperties);
@@ -108,7 +124,6 @@ batteryMass = batteriesMass(3);
 numCylces = 6;
 numberBusses = 26;
 
-
 dailyEnergy = energyPerRoute*numCylces;
 batteryCapacityKWH = (batteryMass * vehicleProperties.energyDensity)/3600000;
 grossVehicleMass = batteryMass + vehicleProperties.maxLoad;
@@ -118,10 +133,10 @@ fleetEnergy = dailyEnergy*numberBusses/3600;
 %% Process Break
 %% Sensitivity Analysis at a single sensitivity instance and for a single efficiency
 
-baseEnergy = [150.952561361859 ,153.173039153320];
-
 loadOptions; 
-eff = {'gearEfficiency'};
+baseEnergy = calcFinalRouteEnergy([3.75, 7.5], options, vehicleProperties);
+
+eff = {'batteryEfficiency'};
 sensitivityChange = 0.8;
 vehicleProperties.(eff{1}) = vehicleProperties.(eff{1}) * sensitivityChange;
 [energy, mass] = calcFinalRouteEnergy([3.75, 7.5], options, vehicleProperties);

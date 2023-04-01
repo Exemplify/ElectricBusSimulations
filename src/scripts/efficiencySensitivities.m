@@ -4,10 +4,6 @@ clc
 %% Load and preprocess data
 conversionsUtil;
 
-baseEnergy = [1.418764073930151e2,1.438426668495186e2];
-
-
-
 %%
 efficiencies = {'gearEfficiency', 'inverterEfficiency', 'batteryEfficiency', 'auxiliaryKilowatts', 'energyDensity'};
 
@@ -24,7 +20,7 @@ for eff = efficiencies
         loadOptions; 
         vehicleProperties.(eff{1}) = vehicleProperties.(eff{1}) * sensitivityChange;
         [energy, mass] = calcFinalRouteEnergy([3.75, 7.5], options, vehicleProperties);
-        percentageChange = 100.*(energy - baseEnergy)./baseEnergy;
+        percentageChange = 100;
         sensitivityTableC3{index, :} = [ vehicleProperties.(eff{1}), energy(1), mass(1), percentageChange(1)];
         sensitivityTableC6{index, :} = [ vehicleProperties.(eff{1}), energy(2), mass(2), percentageChange(2)];
         index = index+1;
@@ -36,13 +32,13 @@ for eff = efficiencies
 end
 
 
-%% fix percentange change caused by base energy error
+%% determine percentange change
 % 
-% 
-% for eff = efficiencies
-%     baseEnergyC3 = sensitivitiesC3.(eff{1}).Energy(5) ;
-%     baseEnergyC6 = sensitivitiesC6.(eff{1}).Energy(5) ;
-% 
-%     sensitivitiesC3.(eff{1}).PercentageChange =  100*(baseEnergyC3 - sensitivitiesC3.(eff{1}).Energy)./baseEnergyC3;
-%     sensitivitiesC6.(eff{1}).PercentageChange =  100*(baseEnergyC6 - sensitivitiesC6.(eff{1}).Energy)./baseEnergyC6;
-% end
+
+for eff = efficiencies
+    baseEnergyC3 = sensitivitiesC3.(eff{1}).Energy(5) ;
+    baseEnergyC6 = sensitivitiesC6.(eff{1}).Energy(5) ;
+
+    sensitivitiesC3.(eff{1}).PercentageChange =  100*(baseEnergyC3 - sensitivitiesC3.(eff{1}).Energy)./baseEnergyC3;
+    sensitivitiesC6.(eff{1}).PercentageChange =  100*(baseEnergyC6 - sensitivitiesC6.(eff{1}).Energy)./baseEnergyC6;
+end
